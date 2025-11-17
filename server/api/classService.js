@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = process.env.REACT_APP_BASE_URL  || "http://localhost:3001/api/classes";
+const url = process.env.REACT_APP_BASE_URL  || "https://online-learning-backend-xi.vercel.app/api/classes";
 
 // Get all classes with optional filters
 export async function fetchClasses({ subject, track, date, tab, q }) {

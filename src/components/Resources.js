@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 
 // 🔹 ADD THIS
-const API_BASE_URL = import.meta.env?.VITE_API_URL || "http://localhost:3001";
+const API_BASE_URL = import.meta.env?.VITE_API_URL || "https://online-learning-backend-xi.vercel.app";
 
 const CATEGORIES = ["All", "English", "Social Science", "Maths", "Science"];
 const LEVELS = ["All", "Beginner", "Intermediate", "Advanced"];

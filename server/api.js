@@ -6,8 +6,6 @@ import { MongoClient } from "mongodb";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import path from "path";
-import { fileURLToPath } from "url";
 
 import classRouter from "./routes/classRoutes.js";
 import courseRouter from "./routes/courseRoutes.js";
@@ -222,6 +220,11 @@ export default async function handler(req, res) {
     return app(req, res);
   } catch (e) {
     console.error("Handler-level DB error:", e);
+    // ✅ Add CORS headers here too
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
     return res.status(500).json({ error: "Database connection failed" });
   }
 }
+

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "proxy": "http://localhost:3001",
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.79",
     "@popperjs/core": "^2.11.8",

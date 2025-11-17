@@ -52,7 +52,7 @@ export function StudentRegister() {
     setServerMsg(null);
     try {
       // Call your API (adjust URL/body to your backend)
-      await axios.post("http://localhost:3001/api/auth/register", {
+      await axios.post("https://online-learning-backend-xi.vercel.app/api/auth/register", {
         name: values.fullName,
         email: values.email,
         phone: values.phone,
