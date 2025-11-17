@@ -20,7 +20,7 @@ export const askAITeacher = async (req, res) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      "HTTP-Referer": "http://localhost:3001",
+      "HTTP-Referer": "https://online-learning-backend-xi.vercel.app/",
       "X-Title": "Online Learning Platform AI Teacher",
     },
   }

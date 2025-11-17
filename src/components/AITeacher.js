@@ -27,7 +27,7 @@ export default function AITeacher({ userId }) {
       const currentMessage = message;
       setMessage("");
 
-      const res = await axios.post("http://localhost:3001/api/ai-teacher/ask", {
+      const res = await axios.post("https://online-learning-backend-xi.vercel.app/api/ai-teacher/ask", {
         userId,
         message: currentMessage,
       });

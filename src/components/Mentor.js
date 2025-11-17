@@ -27,7 +27,7 @@ export function Mentor() {
   useEffect(() => {
     async function fetchMentors() {
       try {
-        const { data } = await axios.get("http://localhost:3001/api/mentors");
+        const { data } = await axios.get("https://online-learning-backend-xi.vercel.app/api/mentors");
         if (data.success) setMentors(data.data);
       } catch (err) {
         console.error(err);
@@ -211,7 +211,7 @@ function BookingModal({ mentor, onClose }) {
 
     setLoading(true);
     try {
-      const { data } = await axios.post("http://localhost:3001/api/mentors/book", {
+      const { data } = await axios.post("https://online-learning-backend-xi.vercel.app/api/mentors/book", {
         mentorId: mentor._id || mentor.id,
         date,
         time,
@@ -229,7 +229,7 @@ function BookingModal({ mentor, onClose }) {
         if (token) {
           axios.defaults.headers.common.Authorization = `Bearer ${token}`;
         }
-        await axios.post(`http://localhost:3001/api/progress/${userId}/mentor-book`, {
+        await axios.post(`https://online-learning-backend-xi.vercel.app/api/progress/${userId}/mentor-book`, {
           mentorId: mentor._id || mentor.id,
           mentorName: mentor.name,
           subjects: mentor.subjects,

@@ -14,7 +14,7 @@ export function Quizzes() {
 
   // Fetch quizzes
   useEffect(() => {
-    fetch("http://localhost:3001/api/quizzes")
+    fetch("https://online-learning-backend-xi.vercel.app/api/quizzes")
       .then(res => res.json())
       .then(data => {
         setQuizList(data.data || []);
@@ -26,7 +26,7 @@ export function Quizzes() {
   // Fetch questions for active quiz
   useEffect(() => {
     if (!activeQuizId) return;
-    fetch(`http://localhost:3001/api/quizzes/${activeQuizId}`)
+    fetch(`https://online-learning-backend-xi.vercel.app/api/quizzes/${activeQuizId}`)
       .then(res => res.json())
       .then(data => {
         setQuestions(data.data?.questions || []);
@@ -83,7 +83,7 @@ export function Quizzes() {
       const activeQuiz = quizList.find(q => q._id === activeQuizId);
       const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
 
-      await axios.post(`http://localhost:3001/api/progress/${userId}/quiz`, {
+      await axios.post(`https://online-learning-backend-xi.vercel.app/api/progress/${userId}/quiz`, {
         quizId: activeQuizId,
         quizTitle: typeof activeQuiz?.title === "object" ? activeQuiz?.title?.text : activeQuiz?.title,
         subject: activeQuiz?.subject || "General",

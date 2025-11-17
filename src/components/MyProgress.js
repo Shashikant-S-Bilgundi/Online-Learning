@@ -90,7 +90,7 @@
           axios.defaults.headers.common.Authorization = `Bearer ${token}`;
         }
 
-        const res = await axios.get(`http://localhost:3001/api/progress/${userId}`);
+        const res = await axios.get(`https://online-learning-backend-xi.vercel.app/api/progress/${userId}`);
         const p = res.data?.data || res.data || {};
         setKpis({
           studyMinutes: p.kpis?.studyMinutes ?? 0,

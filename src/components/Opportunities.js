@@ -27,7 +27,7 @@ export function Opportunities() {
   useEffect(() => {
     async function fetchOpportunities() {
       try {
-        const res = await axios.get("http://localhost:3001/api/opportunities");
+        const res = await axios.get("https://online-learning-backend-xi.vercel.app/api/opportunities");
         setData(res.data.data);
       } catch (err) {
         console.error("Failed to fetch opportunities:", err);

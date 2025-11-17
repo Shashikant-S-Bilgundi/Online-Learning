@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = process.env.REACT_APP_BASE_URL || "http://localhost:3001";
+const url = process.env.REACT_APP_BASE_URL || "https://online-learning-backend-xi.vercel.app";
 
 export async function getAllCourses({ q, category, level, sort }) {
   const params = {};

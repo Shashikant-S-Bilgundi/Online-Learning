@@ -34,7 +34,7 @@ async function handleEnroll(course) {
       axios.defaults.headers.common.Authorization = `Bearer ${token}`;
     }
 
-    await axios.post(`http://localhost:3001/api/progress/${userId}/course-enroll`, {
+    await axios.post(`https://online-learning-backend-xi.vercel.app/api/progress/${userId}/course-enroll`, {
       courseId: course._id || course.id,         
       title: course.title,
       category: course.category,
@@ -53,7 +53,7 @@ async function handleEnroll(course) {
   useEffect(() => {
     async function fetchCourses() {
       try {
-        const res = await axios.get("http://localhost:3001/api/courses", {
+        const res = await axios.get("https://online-learning-backend-xi.vercel.app/api/courses", {
           params: { q, category: cat, level: lvl, sort },
         });
         if (res.data.success) {

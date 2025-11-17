@@ -33,7 +33,7 @@ export function Classes() {
     async function load() {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:3001/api/classes", {
+        const res = await axios.get("https://online-learning-backend-xi.vercel.app/api/classes", {
           params: {
             q: q || undefined,
             subject: subj !== "All" ? subj : undefined,
@@ -72,7 +72,7 @@ async function handleJoinClass(cls) {
         axios.defaults.headers.common.Authorization = `Bearer ${token}`;
       }
 
-      await axios.post(`http://localhost:3001/api/progress/${userId}/class-join`, {
+      await axios.post(`https://online-learning-backend-xi.vercel.app/api/progress/${userId}/class-join`, {
         classId: cls._id || cls.id,
         title: cls.title,
         subject: cls.subject,
@@ -87,7 +87,7 @@ async function handleJoinClass(cls) {
 
       if (cls._id && cls.mode === "Live" && Number.isFinite(cls.seats)) {
         try {
-          await axios.post(`http://localhost:3001/api/classes/${cls._id}/book`, { action: "book" });
+          await axios.post(`https://online-learning-backend-xi.vercel.app/api/classes/${cls._id}/book`, { action: "book" });
         } catch (_) { /* ignore seat booking errors here */ }
       }
 

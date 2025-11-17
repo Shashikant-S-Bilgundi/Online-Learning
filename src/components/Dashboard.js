@@ -53,7 +53,7 @@ export function Dashboard() {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await axios.get("http://localhost:3001/api/dashboards");
+        const res = await axios.get("https://online-learning-backend-xi.vercel.app/api/dashboards");
         if (res.data.success) {
           const data = res.data.data;
           setUpcoming(data.filter(d => d.mode));

@@ -6,26 +6,15 @@ import {
   FileSpreadsheet, FileCode, Film, Filter, Search, Layers, X
 } from "lucide-react";
 
+// 🔹 ADD THIS
+const API_BASE_URL = import.meta.env?.VITE_API_URL || "http://localhost:3001";
+
 const CATEGORIES = ["All", "English", "Social Science", "Maths", "Science"];
 const LEVELS = ["All", "Beginner", "Intermediate", "Advanced"];
 const FORMATS = ["All", "PDF", "Image", "Video", "XLS", "PPT", "Code"];
 
 function FormatBadge({ format }) {
-  const f = (format || "").toLowerCase();
-  const map = {
-    pdf: { icon: <FileText size={16} />, cls: "bg-danger" },
-    image: { icon: <ImageIcon size={16} />, cls: "bg-info" },
-    video: { icon: <Film size={16} />, cls: "bg-dark" },
-    xls: { icon: <FileSpreadsheet size={16} />, cls: "bg-success" },
-    ppt: { icon: <Layers size={16} />, cls: "bg-warning text-dark" },
-    code: { icon: <FileCode size={16} />, cls: "bg-primary" },
-  };
-  const m = map[f] || { icon: <FileText size={16} />, cls: "bg-secondary" };
-  return (
-    <span className={`badge d-inline-flex align-items-center gap-1 ${m.cls}`}>
-      {m.icon} {format}
-    </span>
-  );
+  // ... (unchanged)
 }
 
 export function Resources() {
@@ -42,9 +31,12 @@ export function Resources() {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const { data } = await axios.get("http://localhost:3001/api/resources", {
-          params: { category: cat, level: lvl, format: fmt, q }
-        });
+        const { data } = await axios.get(
+          `${API_BASE_URL}/api/resources`,
+          {
+            params: { category: cat, level: lvl, format: fmt, q }
+          }
+        );
         if (data.success) setResources(data.data);
       } catch (err) {
         console.error("Error fetching resources:", err);

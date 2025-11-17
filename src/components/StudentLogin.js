@@ -18,7 +18,7 @@ export function StudentLogin({ onLogin }) {
   async function handleSubmit(values, { setSubmitting }) {
     setServerMsg(null);
     try {
-      const base = import.meta.env?.VITE_API_URL || "http://localhost:3001";
+      const base = import.meta.env?.VITE_API_URL || "https://online-learning-backend-xi.vercel.app";
       const { data } = await axios.post(`${base}/api/auth/login`, {
         email: values.email,
         password: values.password,

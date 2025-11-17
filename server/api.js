@@ -1,12 +1,13 @@
-// server/api.js (ESM)
+// api.js (ESM)
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
-import mongoose from "mongoose";  // For Mongoose connection (used by classRouter & others)
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import classRouter from "./routes/classRoutes.js";
 import courseRouter from "./routes/courseRoutes.js";
@@ -18,48 +19,53 @@ import resourceRouter from "./routes/resourceRoutes.js";
 import grantRouter from "./routes/grantRoutes.js";
 import feedbackRouter from "./routes/feedRoutes.js";
 import progressRouter from "./routes/progressRoutes.js";
-
-// ✅ NEW: AI Teacher routes
 import aiTeacherRoutes from "./routes/aiTeacherRoutes.js";
 
+// ----- dotenv (for local dev) -----
+dotenv.config();
 
-dotenv.config({ path: path.join(process.cwd(), "server", ".env") });
-
+// ----- Express app -----
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- MongoDB setup (MongoClient + Mongoose) ---
+// ----- MongoDB setup -----
 const uri = process.env.MONGODB_URI;
 if (!uri) {
-  console.error("MONGODB_URI missing in server/.env");
-  process.exit(1);
+  console.error("MONGODB_URI missing in environment variables");
+  // For serverless, we don't exit; just respond with error when called
 }
 
 const client = new MongoClient(uri, { ignoreUndefined: true });
 let students;
+let dbInitPromise = null;
 
 async function initDb() {
-  try {
-    await client.connect();
-    const db = client.db();
-    app.locals.db = db;
-    students = db.collection("students");
+  if (!dbInitPromise) {
+    dbInitPromise = (async () => {
+      try {
+        await client.connect();
+        const db = client.db();
+        app.locals.db = db;
+        students = db.collection("students");
 
-    await students.createIndex({ email: 1 }, { unique: true });
-    await students.createIndex({ phone: 1 }, { unique: true });
-    console.log("MongoDB (MongoClient) Connected...");
+        await students.createIndex({ email: 1 }, { unique: true });
+        await students.createIndex({ phone: 1 }, { unique: true });
+        console.log("MongoDB (MongoClient) Connected...");
 
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
-    });
-    console.log("Mongoose Connected...");
-  } catch (error) {
-    console.error("Database init error:", error);
-    process.exit(1);
+        await mongoose.connect(uri, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+          serverSelectionTimeoutMS: 5000,
+        });
+        console.log("Mongoose Connected...");
+      } catch (error) {
+        console.error("Database init error:", error);
+        throw error;
+      }
+    })();
   }
+  return dbInitPromise;
 }
 
 function bad(res, code, msg) {
@@ -74,12 +80,18 @@ function isPhone(v = "") {
   return /^[6-9]\d{9}$/.test(v);
 }
 
+// ----- Health check -----
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, time: new Date().toISOString() });
 });
 
+// ----- Registration -----
 app.post("/api/auth/register", async (req, res) => {
   try {
+    if (!students) {
+      return bad(res, 500, "Database not initialized");
+    }
+
     const { name, email, phone, grade, board, city, password } = req.body || {};
 
     if (!name || name.length < 3 || name.length > 60)
@@ -140,9 +152,10 @@ app.post("/api/auth/register", async (req, res) => {
   }
 });
 
+// Root
 app.get("/", (req, res) => res.send("API is Live!"));
 
-// --- Routes ---
+// ----- Routes -----
 app.use("/api/classes", classRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/dashboards", dashboardRouter);
@@ -153,26 +166,15 @@ app.use("/api/resources", resourceRouter);
 app.use("/api/grants", grantRouter);
 app.use("/api/feedbacks", feedbackRouter);
 app.use("/api/progress", progressRouter);
-
-// ✅ NEW: mount AI Teacher routes
-// e.g. POST /api/ai-teacher/ask, GET /api/ai-teacher/:userId
 app.use("/api/ai-teacher", aiTeacherRoutes);
 
-const PORT = process.env.PORT || 3001;
-initDb()
-  .then(() => {
-    app.listen(PORT, () =>
-      console.log(`API running on http://localhost:${PORT}`)
-    );
-  })
-  .catch((e) => {
-    console.error("Failed to start server due to DB error:", e);
-    process.exit(1);
-  });
-
-// login authentication
+// ----- Login -----
 app.post("/api/auth/login", async (req, res) => {
   try {
+    if (!students) {
+      return res.status(500).json({ message: "Database not initialized." });
+    }
+
     const { email, password } = req.body || {};
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required." });
@@ -212,3 +214,14 @@ app.post("/api/auth/login", async (req, res) => {
     return res.status(500).json({ message: "Server error. Please try again." });
   }
 });
+
+// ----- Vercel handler (IMPORTANT) -----
+export default async function handler(req, res) {
+  try {
+    await initDb();
+    return app(req, res);
+  } catch (e) {
+    console.error("Handler-level DB error:", e);
+    return res.status(500).json({ error: "Database connection failed" });
+  }
+}

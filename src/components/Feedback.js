@@ -71,7 +71,7 @@ export function Feedback() {
       formData.append("email", anonymous ? "" : email.trim());
       if (file) formData.append("screenshot", file);
 
-      const res = await axios.post("http://localhost:3001/api/feedbacks", formData, {
+      const res = await axios.post("https://online-learning-backend-xi.vercel.app/api/feedbacks", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

@@ -45,7 +45,7 @@ export function Grants() {
 
   useEffect(() => {
   axios
-    .get("http://localhost:3001/api/grants", {
+    .get("https://online-learning-backend-xi.vercel.app/api/grants", {
       params: { kind: tab, source, state, q, sort },
     })
     .then((res) => setData(res.data.data || []))
